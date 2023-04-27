@@ -38,3 +38,4 @@ fn run<R: BufRead>(reader: R, verbose: bool) {
         println!("{}", answer);
     }
 }
+
