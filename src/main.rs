@@ -5,12 +5,13 @@ use clap::Parser;
 use std::fs::File;
 use std::io::{stdin, BufRead, BufReader};
 use anyhow::Result;
+use std::path::PathBuf;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
     #[arg(value_name = "FILE")]
-    formula_file: Option<String>,
+    formula_file: Option<PathBuf>,
 
     #[arg(short, long)]
     verbose: bool,
