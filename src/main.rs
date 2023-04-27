@@ -4,6 +4,7 @@ use calculator::RpnCalculator;
 use clap::Parser;
 use std::fs::File;
 use std::io::{stdin, BufRead, BufReader};
+use anyhow::Result;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -15,27 +16,31 @@ struct Args {
     verbose: bool,
 }
 
-fn main() {
+fn main() -> Result<()> {
     let args = Args::parse();
 
     if let Some(path) = args.formula_file {
         let f = File::open(path).unwrap();
         let reader = BufReader::new(f);
-        run(reader, args.verbose);
+        run(reader, args.verbose)
     } else {
         let stdin = stdin();
         let reader = stdin.lock();
-        run(reader, args.verbose);
+        run(reader, args.verbose)
     }
 }
 
-fn run<R: BufRead>(reader: R, verbose: bool) {
+fn run<R: BufRead>(reader: R, verbose: bool) -> Result<()> {
     let calc = RpnCalculator::new(verbose);
 
     for line in reader.lines() {
-        let line = line.unwrap();
-        let answer = calc.eval(&line);
-        println!("{}", answer);
+        let line = line?;
+        match calc.eval(&line) {
+            Ok(answer) => println!("{}", answer),
+            Err(e) => eprintln!("{:#?}", e)
+        }
     }
+
+    Ok(())
 }
 
